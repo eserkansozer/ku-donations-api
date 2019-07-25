@@ -9,6 +9,9 @@
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
+**/appsettings.development.json
+**/appsettings.json
+**/appsettings.production.json
 
 # Build results
 [Dd]ebug/
