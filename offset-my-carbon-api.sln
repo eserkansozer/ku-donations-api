@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28307.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "offset-my-carbon-api", "offset-my-carbon-api\offset-my-carbon-api.csproj", "{F60C37DD-FFF6-47D8-AD98-7AFE2492C2B0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "offset-my-carbon-dal", "offset-my-carbon-dal\offset-my-carbon-dal.csproj", "{7C324D86-5EFC-4CE8-A8B0-CA49786D94CD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{F60C37DD-FFF6-47D8-AD98-7AFE2492C2B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F60C37DD-FFF6-47D8-AD98-7AFE2492C2B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F60C37DD-FFF6-47D8-AD98-7AFE2492C2B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C324D86-5EFC-4CE8-A8B0-CA49786D94CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C324D86-5EFC-4CE8-A8B0-CA49786D94CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C324D86-5EFC-4CE8-A8B0-CA49786D94CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C324D86-5EFC-4CE8-A8B0-CA49786D94CD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
