@@ -11,7 +11,7 @@ using offset_my_carbon_dal.Repositories;
 
 namespace offset_my_carbon_api.Controllers
 {
-    [Route("api/[controller]")]
+
     [ApiController]
     public class DonationsController : ControllerBase
     {
@@ -23,13 +23,47 @@ namespace offset_my_carbon_api.Controllers
         }
 
         // GET: api/Donations
+        [Route("api/donations")]
         [HttpGet]
         public IEnumerable<Donation> GetDonations()
         {
             return _repository.GetDonations();
         }
 
+        // GET: api/Donations/count
+        [Route("api/donations/count")]
+        [HttpGet]
+        public int GetDonationCount()
+        {
+            return _repository.GetDonations().Count();
+        }
+
+        // GET: api/Donations/trees/count
+        [Route("api/donations/trees/count")]
+        [HttpGet]
+        public int GetDonationTreeCount()
+        {
+            return _repository.GetDonations().Sum(d => d.Trees);
+        }
+
+        // GET: api/Donations/test/count
+        [Route("api/donations/{charity}/count")]
+        [HttpGet("{charity}")]
+        public int GetDonationCountForCharity([FromRoute] string charity)
+        {
+            return _repository.GetDonationsByCharity(charity).Count();
+        }
+
+        // GET: api/Donations/test/trees/count
+        [Route("api/donations/{charity}/trees/count")]
+        [HttpGet("{charity}")]
+        public int GetDonationTreeCountForCharity([FromRoute] string charity)
+        {
+            return _repository.GetDonationsByCharity(charity).Sum(d => d.Trees);
+        }
+
         // GET: api/Donations/test
+        [Route("api/donations/{charity}")]
         [HttpGet("{charity}")]
         public IActionResult GetDonation([FromRoute] string charity)
         {
@@ -46,6 +80,21 @@ namespace offset_my_carbon_api.Controllers
             }
 
             return Ok(donation);
+        }
+
+        // POST: api/Donations
+        [Route("api/donations")]
+        [HttpPost]
+        public IActionResult PostDonation([FromBody] Donation donation)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            _repository.AddDonation(donation);
+
+            return CreatedAtAction("GetDonation", new { id = donation.Id }, donation);
         }
 
         //// PUT: api/Donations/5
@@ -81,21 +130,6 @@ namespace offset_my_carbon_api.Controllers
         //    }
 
         //    return NoContent();
-        //}
-
-        //// POST: api/Donations
-        //[HttpPost]
-        //public async Task<IActionResult> PostDonation([FromBody] Donation donation)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-
-        //    _repository.Donations.Add(donation);
-        //    await _repository.SaveChangesAsync();
-
-        //    return CreatedAtAction("GetDonation", new { id = donation.Id }, donation);
         //}
 
         //// DELETE: api/Donations/5

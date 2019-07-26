@@ -1,8 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using offset_my_carbon_dal.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace offset_my_carbon_dal.Data
 {

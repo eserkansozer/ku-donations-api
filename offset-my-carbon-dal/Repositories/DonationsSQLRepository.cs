@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using offset_my_carbon_dal.Data;
 using offset_my_carbon_dal.Models;
@@ -13,6 +12,12 @@ namespace offset_my_carbon_dal.Repositories
         public DonationsSqlRepository(DataContext dataContext)
         {
             _dataContext = dataContext;
+        }
+
+        public void AddDonation(Donation donation)
+        {
+            _dataContext.Donations.Add(donation);
+            _dataContext.SaveChanges();
         }
 
         public IEnumerable<Donation> GetDonations()
