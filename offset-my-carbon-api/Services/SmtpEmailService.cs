@@ -45,9 +45,7 @@ namespace Services
             var smtpPort = _config.GetValue<int>("SMTP:Port");
             var smtpUserName = _config.GetValue<string>("SMTP:UserName");
             var smtpPassword = _config.GetValue<string>("SMTP:Password");
-            client.ServerCertificateValidationCallback = (s, c, h, e) => {
-                return ((System.Security.Cryptography.X509Certificates.X509Certificate2)c).Thumbprint == _config.GetValue<string>("SMTP:Thumbprint");
-            };
+            client.ServerCertificateValidationCallback = (s, c, h, e) => true;
             client.Connect(smtpAddress, smtpPort, true);
             client.Authenticate(smtpUserName, smtpPassword);
 

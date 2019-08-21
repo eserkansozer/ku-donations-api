@@ -101,7 +101,10 @@ namespace offset_my_carbon_api.Controllers
             try
             {
                 _emailService.SendDonationEmail(donation);
-            }catch(Exception) { };
+            }catch(Exception e)
+            {
+                return new JsonResult(e.Message);
+                    };
 
             return CreatedAtAction("GetDonation", new { id = donation.Id }, donation);
         }
