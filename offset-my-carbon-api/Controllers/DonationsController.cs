@@ -97,7 +97,11 @@ namespace offset_my_carbon_api.Controllers
 
             donation.TimeStamp = DateTime.Now;
             _repository.AddDonation(donation);
-            _emailService.SendDonationEmail(donation);
+
+            try
+            {
+                _emailService.SendDonationEmail(donation);
+            }catch(Exception) { };
 
             return CreatedAtAction("GetDonation", new { id = donation.Id }, donation);
         }
