@@ -29,5 +29,10 @@ namespace offset_my_carbon_dal.Repositories
         {
             return _dataContext.Donations.Where(d => d.Charity == charity);
         }
+
+        public Donation GetDonationById(int id)
+        {
+            return _dataContext.Donations.Find(id);
+        }
     }
 }

@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using offset_my_carbon_dal.Data;
 using offset_my_carbon_dal.Models;
 using offset_my_carbon_dal.Repositories;
+using Services;
 
 namespace offset_my_carbon_api.Controllers
 {
@@ -16,10 +17,12 @@ namespace offset_my_carbon_api.Controllers
     public class DonationsController : ControllerBase
     {
         private readonly IDonationsRepository _repository;
+        private readonly IEmailService _emailService;
 
-        public DonationsController(IDonationsRepository repository)
+        public DonationsController(IDonationsRepository repository, IEmailService emailService)
         {
             _repository = repository;
+            _emailService = emailService;
         }
 
         // GET: api/Donations
@@ -92,10 +95,32 @@ namespace offset_my_carbon_api.Controllers
                 return BadRequest(ModelState);
             }
 
+            donation.TimeStamp = DateTime.Now;
             _repository.AddDonation(donation);
+            _emailService.SendDonationEmail(donation);
 
             return CreatedAtAction("GetDonation", new { id = donation.Id }, donation);
         }
+
+        // GET: api/Donations/5
+        [HttpGet("api/donation/{id}")]
+        public IActionResult GetDonation([FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var donation = _repository.GetDonationById(id);
+
+            if (donation == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(donation);
+        }
+
 
         //// PUT: api/Donations/5
         //[HttpPut("{id}")]
