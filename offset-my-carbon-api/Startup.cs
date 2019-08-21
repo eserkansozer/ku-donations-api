@@ -38,7 +38,7 @@ namespace offset_my_carbon_api
 
             services.AddTransient<Seed>();
             services.AddTransient<IDonationsRepository, DonationsSqlRepository>();
-            services.AddTransient<IEmailService, EmailService>();
+            services.AddTransient<IEmailService, SmtpEmailService>();
 
             services.AddCors();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);

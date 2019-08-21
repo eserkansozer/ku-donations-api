@@ -5,11 +5,11 @@ using SendGrid.Helpers.Mail;
 
 namespace Services
 {
-    public class EmailService : IEmailService
+    public class SendGridEmailService : IEmailService
     {
         private readonly IConfiguration _config;
 
-        public EmailService(IConfiguration config)
+        public SendGridEmailService(IConfiguration config)
         {
             _config = config;
         }

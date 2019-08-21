@@ -11,6 +11,7 @@
 *.userprefs
 **/appsettings.development.json
 **/appsettings.json
+**/appsettings.development.json
 **/appsettings.production.json
 
 # Build results
