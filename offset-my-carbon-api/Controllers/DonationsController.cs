@@ -101,10 +101,11 @@ namespace offset_my_carbon_api.Controllers
             try
             {
                 _emailService.SendDonationEmail(donation);
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 return new JsonResult(e.Message);
-                    };
+            };
 
             return CreatedAtAction("GetDonation", new { id = donation.Id }, donation);
         }
@@ -128,6 +129,21 @@ namespace offset_my_carbon_api.Controllers
             return Ok(donation);
         }
 
+        // GET: api/Donations/5
+        [HttpGet("api/weeklyreport/{charity}")]
+        public IActionResult WeeklyReport(string charity)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var donations = _repository.GetDonationsByCharity(charity);
+            var weeksDonations = donations.Where(d => d.TimeStamp >= DateTime.Now.AddDays(-7));
+            _emailService.SendWeeklyEmail(weeksDonations.ToList(), "egeorman");           
+
+            return Ok();
+        }
 
         //// PUT: api/Donations/5
         //[HttpPut("{id}")]

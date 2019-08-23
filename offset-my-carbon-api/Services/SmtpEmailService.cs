@@ -3,6 +3,9 @@ using Microsoft.Extensions.Configuration;
 using offset_my_carbon_dal.Models;
 using MailKit.Net.Smtp;
 using MimeKit;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Services
 {
@@ -19,12 +22,10 @@ namespace Services
         {
             var message = new MimeMessage();
 
-            var from = new MailboxAddress("KarbonsuzUcus.web",
-            "karbonsuzucus@groovytechs.co.uk");
+            var from = new MailboxAddress("KarbonsuzUcus.web", _config.GetValue<string>("SMTP:WebEmail"));
             message.From.Add(from);
 
-            var to = new MailboxAddress("KarbonsuzUcus.admin",
-            "karbonsuzucus@groovytechs.co.uk");
+            var to = new MailboxAddress("KarbonsuzUcus.admin", _config.GetValue<string>("SMTP:AdminEmail"));
             message.To.Add(to);
 
             message.Subject = $"{donation.Charity}'e bagis yonlendirildi: {donation.Trees} agac!";
@@ -38,6 +39,46 @@ namespace Services
                               $"</ul>";
             bodyBuilder.TextBody = "KarbonsuzUcus.com araciligiyla bir bagis daha yonlendirildi!";
 
+            message.Body = bodyBuilder.ToMessageBody();
+
+            var client = new SmtpClient();
+            var smtpAddress = _config.GetValue<string>("SMTP:Address");
+            var smtpPort = _config.GetValue<int>("SMTP:Port");
+            var smtpUserName = _config.GetValue<string>("SMTP:UserName");
+            var smtpPassword = _config.GetValue<string>("SMTP:Password");
+            client.ServerCertificateValidationCallback = (s, c, h, e) => true;
+            client.Connect(smtpAddress, smtpPort, true);
+            client.Authenticate(smtpUserName, smtpPassword);
+
+            client.Send(message);
+            client.Disconnect(true);
+            client.Dispose();
+        }
+
+        public void SendWeeklyEmail(List<Donation> donations, string charity)
+        {
+            var message = new MimeMessage();
+
+            var from = new MailboxAddress("KarbonsuzUcus.web", _config.GetValue<string>("SMTP:WebEmail"));
+            message.From.Add(from);
+
+            var to = new MailboxAddress($"KarbonsuzUcus.{charity}", _config.GetValue<string>("SMTP:CharityEmail"));
+            message.To.Add(to);
+
+            message.Subject = $"{charity} haftalik rapor: Toplam {donations.Sum(d=>d.Trees)} agac bagisi";
+
+            var sb = new StringBuilder();
+            sb.Append($"<strong>KarbonsuzUcus.com araciligiyla yonlendirilen agac bagislari</strong><ul>");
+            foreach (var donation in donations)
+            {
+                sb.Append($"<li>Tarih: {donation.TimeStamp.ToShortDateString()}, Adet: {donation.Trees}, Kaynak: {donation.Referrer}</li>");
+            }
+            sb.Append($"</ul>");
+
+            var bodyBuilder = new BodyBuilder();
+
+            bodyBuilder.TextBody = $"{charity} haftalik rapor: Toplam {donations.Count} agac bagisi";
+            bodyBuilder.HtmlBody = sb.ToString();
             message.Body = bodyBuilder.ToMessageBody();
 
             var client = new SmtpClient();
