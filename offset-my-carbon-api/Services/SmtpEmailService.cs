@@ -28,14 +28,14 @@ namespace Services
             var to = new MailboxAddress("KarbonsuzUcus.admin", _config.GetValue<string>("SMTP:AdminEmail"));
             message.To.Add(to);
 
-            message.Subject = $"{donation.Charity}'e bagis yonlendirildi: {donation.Trees} agac!";
+            message.Subject = $"{donation.Charity} vakfina bagis yonlendirildi: {donation.Trees} agac!";
 
             var bodyBuilder = new BodyBuilder();
             bodyBuilder.HtmlBody = $"<strong>KarbonsuzUcus.com araciligiyla bir bagis daha yonlendirildi!</strong><ul>" +
                               $"<li>Tarih: {donation.TimeStamp.ToShortDateString()}</li>" +
                               $"<li>Vakif: {donation.Charity}</li>" +
                               $"<li>Adet: {donation.Trees}</li>" +
-                              $"<li>Kaynak: {donation.Referrer}</li>" +
+                              $"<li>Kaynak: {(String.IsNullOrEmpty(donation.Referrer) ? ("Diger") : donation.Referrer)}</li>" +
                               $"</ul>";
             bodyBuilder.TextBody = "KarbonsuzUcus.com araciligiyla bir bagis daha yonlendirildi!";
 
@@ -62,8 +62,11 @@ namespace Services
             var from = new MailboxAddress("KarbonsuzUcus.web", _config.GetValue<string>("SMTP:WebEmail"));
             message.From.Add(from);
 
-            var to = new MailboxAddress($"KarbonsuzUcus.{charity}", _config.GetValue<string>("SMTP:CharityEmail"));
-            message.To.Add(to);
+            var toAdmin = new MailboxAddress($"KarbonsuzUcus.{charity}", _config.GetValue<string>("SMTP:AdminEmail"));
+            message.To.Add(toAdmin);
+
+            var toCharity = new MailboxAddress($"KarbonsuzUcus.{charity}", _config.GetValue<string>("SMTP:CharityEmail"));
+            message.To.Add(toCharity);
 
             message.Subject = $"{charity} haftalik rapor: Toplam {donations.Sum(d=>d.Trees)} agac bagisi";
 
@@ -71,7 +74,7 @@ namespace Services
             sb.Append($"<strong>KarbonsuzUcus.com araciligiyla yonlendirilen agac bagislari</strong><ul>");
             foreach (var donation in donations)
             {
-                sb.Append($"<li>Tarih: {donation.TimeStamp.ToShortDateString()}, Adet: {donation.Trees}, Kaynak: {donation.Referrer}</li>");
+                sb.Append($"<li>Tarih: {donation.TimeStamp.ToShortDateString()}, Adet: {donation.Trees}, Kaynak: {(String.IsNullOrEmpty(donation.Referrer) ? ("Diger") : donation.Referrer)}</li>");
             }
             sb.Append($"</ul>");
 
