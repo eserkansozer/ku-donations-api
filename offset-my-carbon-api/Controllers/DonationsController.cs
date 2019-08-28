@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using offset_my_carbon_dal.Data;
 using offset_my_carbon_dal.Models;
 using offset_my_carbon_dal.Repositories;
-using Services;
+using offset_my_carbon_services;
+using offset_my_carbon_services.Models;
 
 namespace offset_my_carbon_api.Controllers
 {
@@ -100,7 +97,17 @@ namespace offset_my_carbon_api.Controllers
 
             try
             {
-                _emailService.SendDonationEmail(donation);
+                var donationEmail = new DonationEmail()
+                {
+                    Charity = donation.Charity,
+                    Referrer = donation.Referrer,
+                    TimeStamp = donation.TimeStamp,
+                    Trees = donation.Trees
+                };
+                //_emailService.SendDonationEmail(donationEmail);
+                //TODO: Don't send email immediately, instead add email message to Queue
+                //TODO: Write a new Azure function with queue trigger which reads from queue and sends email using email service (as library)
+                //TODO: Remove services project from this solution and add it into Nuget package
             }
             catch (Exception e)
             {
@@ -129,9 +136,8 @@ namespace offset_my_carbon_api.Controllers
             return Ok(donation);
         }
 
-        // GET: api/Donations/5
-        [HttpGet("api/weeklyreport/{charity}")]
-        public IActionResult WeeklyReport(string charity)
+        [HttpGet("api/weeklydonations/{charity}")]
+        public IActionResult WeeklyDonations(string charity)
         {
             if (!ModelState.IsValid)
             {
@@ -140,10 +146,23 @@ namespace offset_my_carbon_api.Controllers
 
             var donations = _repository.GetDonationsByCharity(charity);
             var weeksDonations = donations.Where(d => d.TimeStamp >= DateTime.Now.AddDays(-7));
-            _emailService.SendWeeklyEmail(weeksDonations.ToList(), "egeorman");           
-
-            return Ok();
+            return new JsonResult(weeksDonations);
         }
+
+        //[HttpGet("api/weeklyreport/{charity}")]
+        //public IActionResult WeeklyReport(string charity)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
+
+        //    var donations = _repository.GetDonationsByCharity(charity);
+        //    var weeksDonations = donations.Where(d => d.TimeStamp >= DateTime.Now.AddDays(-7));
+        //    _emailService.SendWeeklyEmail(weeksDonations.ToList(), "egeorman");           
+
+        //    return Ok();
+        //}
 
         //// PUT: api/Donations/5
         //[HttpPut("{id}")]

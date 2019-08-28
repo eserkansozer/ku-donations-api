@@ -6,8 +6,9 @@ using MimeKit;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using offset_my_carbon_services.Models;
 
-namespace Services
+namespace offset_my_carbon_services
 {
     public class SmtpEmailService : IEmailService
     {
@@ -18,7 +19,7 @@ namespace Services
             _config = config;
         }
 
-        public void SendDonationEmail(Donation donation)
+        public void SendDonationEmail(DonationEmail donation)
         {
             var message = new MimeMessage();
 
@@ -55,7 +56,7 @@ namespace Services
             client.Dispose();
         }
 
-        public void SendWeeklyEmail(List<Donation> donations, string charity)
+        public void SendWeeklyEmail(List<DonationEmail> donations, string charity)
         {
             var message = new MimeMessage();
 

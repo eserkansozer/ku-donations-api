@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using Microsoft.Extensions.Configuration;
-using offset_my_carbon_dal.Models;
-using SendGrid;
-using SendGrid.Helpers.Mail;
+﻿//using System.Collections.Generic;
+//using Microsoft.Extensions.Configuration;
+//using offset_my_carbon_dal.Models;
+//using SendGrid;
+//using SendGrid.Helpers.Mail;
 
-namespace Services
-{
+//namespace offset_my_carbon_services
+//{
 //    public class SendGridEmailService : IEmailService
 //    {
 //        private readonly IConfiguration _config;
@@ -39,4 +39,4 @@ namespace Services
 //            throw new System.NotImplementedException();
 //        }
 //    }
-}
+//}
