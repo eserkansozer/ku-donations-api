@@ -18,7 +18,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\offset-my-carbon-dal\offset-my-carbon-dal.csproj" />
-    <ProjectReference Include="..\offset-my-carbon-services\offset-my-carbon-services.csproj" />
   </ItemGroup>
 
 </Project>

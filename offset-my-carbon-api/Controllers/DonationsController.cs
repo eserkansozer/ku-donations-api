@@ -4,8 +4,6 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using offset_my_carbon_dal.Models;
 using offset_my_carbon_dal.Repositories;
-using offset_my_carbon_services;
-using offset_my_carbon_services.Models;
 
 namespace offset_my_carbon_api.Controllers
 {
@@ -14,12 +12,10 @@ namespace offset_my_carbon_api.Controllers
     public class DonationsController : ControllerBase
     {
         private readonly IDonationsRepository _repository;
-        private readonly IEmailService _emailService;
 
-        public DonationsController(IDonationsRepository repository, IEmailService emailService)
+        public DonationsController(IDonationsRepository repository)
         {
             _repository = repository;
-            _emailService = emailService;
         }
 
         // GET: api/Donations
@@ -95,24 +91,18 @@ namespace offset_my_carbon_api.Controllers
             donation.TimeStamp = DateTime.Now;
             _repository.AddDonation(donation);
 
-            try
-            {
-                var donationEmail = new DonationEmail()
-                {
-                    Charity = donation.Charity,
-                    Referrer = donation.Referrer,
-                    TimeStamp = donation.TimeStamp,
-                    Trees = donation.Trees
-                };
+
+                //var donationEmail = new DonationEmail()
+                //{
+                //    Charity = donation.Charity,
+                //    Referrer = donation.Referrer,
+                //    TimeStamp = donation.TimeStamp,
+                //    Trees = donation.Trees
+                //};
                 //_emailService.SendDonationEmail(donationEmail);
                 //TODO: Don't send email immediately, instead add email message to Queue
                 //TODO: Write a new Azure function with queue trigger which reads from queue and sends email using email service (as library)
                 //TODO: Remove services project from this solution and add it into Nuget package
-            }
-            catch (Exception e)
-            {
-                return new JsonResult(e.Message);
-            };
 
             return CreatedAtAction("GetDonation", new { id = donation.Id }, donation);
         }

@@ -8,7 +8,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using offset_my_carbon_dal.Data;
 using offset_my_carbon_dal.Repositories;
-using offset_my_carbon_services;
 
 namespace offset_my_carbon_api
 {
@@ -31,7 +30,7 @@ namespace offset_my_carbon_api
 
             services.AddTransient<Seed>();
             services.AddTransient<IDonationsRepository, DonationsSqlRepository>();
-            services.AddTransient<IEmailService, SmtpEmailService>();
+            //services.AddTransient<IEmailService, SmtpEmailService>();
 
             services.AddCors();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
