@@ -2,20 +2,27 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Storage;
+using Microsoft.Azure.Storage.Queue;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using offset_my_carbon_dal.Models;
 using offset_my_carbon_dal.Repositories;
+using offset_my_carbon_services.Models;
 
 namespace offset_my_carbon_api.Controllers
 {
-
     [ApiController]
     public class DonationsController : ControllerBase
     {
         private readonly IDonationsRepository _repository;
 
-        public DonationsController(IDonationsRepository repository)
+        public IConfiguration Configuration { get; }
+
+        public DonationsController(IDonationsRepository repository, IConfiguration configuration)
         {
             _repository = repository;
+            Configuration = configuration;
         }
 
         // GET: api/Donations
@@ -91,18 +98,7 @@ namespace offset_my_carbon_api.Controllers
             donation.TimeStamp = DateTime.Now;
             _repository.AddDonation(donation);
 
-
-                //var donationEmail = new DonationEmail()
-                //{
-                //    Charity = donation.Charity,
-                //    Referrer = donation.Referrer,
-                //    TimeStamp = donation.TimeStamp,
-                //    Trees = donation.Trees
-                //};
-                //_emailService.SendDonationEmail(donationEmail);
-                //TODO: Don't send email immediately, instead add email message to Queue
-                //TODO: Write a new Azure function with queue trigger which reads from queue and sends email using email service (as library)
-                //TODO: Remove services project from this solution and add it into Nuget package
+            AddDonationToEmailQueue(donation);
 
             return CreatedAtAction("GetDonation", new { id = donation.Id }, donation);
         }
@@ -137,6 +133,33 @@ namespace offset_my_carbon_api.Controllers
             var donations = _repository.GetDonationsByCharity(charity);
             var weeksDonations = donations.Where(d => d.TimeStamp >= DateTime.Now.AddDays(-7));
             return new JsonResult(weeksDonations);
+        }
+
+        private void AddDonationToEmailQueue(Donation donation)
+        {
+            var donationEmail = new DonationEmail()
+            {
+                Charity = donation.Charity,
+                Referrer = donation.Referrer,
+                TimeStamp = donation.TimeStamp,
+                Trees = donation.Trees
+            };
+
+            string storageConnectionString = Configuration.GetConnectionString("StorageConnectionString");
+
+
+            // Check whether the connection string can be parsed.
+            if (CloudStorageAccount.TryParse(storageConnectionString, out CloudStorageAccount storageAccount))
+            {
+                // Create the CloudQueueClient that represents the queue endpoint for the storage account.
+                CloudQueueClient cloudQueueClient = storageAccount.CreateCloudQueueClient();
+
+                var queue = cloudQueueClient.GetQueueReference("donationemailsqueue");
+
+                var jsonMessage = JsonConvert.SerializeObject(donation);
+                CloudQueueMessage message = new CloudQueueMessage(jsonMessage);
+                queue.AddMessage(message, new TimeSpan(7, 0, 0, 0), null, null, null);
+            }
         }
 
         //[HttpGet("api/weeklyreport/{charity}")]
