@@ -147,7 +147,6 @@ namespace offset_my_carbon_api.Controllers
 
             string storageConnectionString = Configuration.GetConnectionString("StorageConnectionString");
 
-
             // Check whether the connection string can be parsed.
             if (CloudStorageAccount.TryParse(storageConnectionString, out CloudStorageAccount storageAccount))
             {
@@ -156,7 +155,7 @@ namespace offset_my_carbon_api.Controllers
 
                 var queue = cloudQueueClient.GetQueueReference("donationemailsqueue");
 
-                var jsonMessage = JsonConvert.SerializeObject(donation);
+                var jsonMessage = JsonConvert.SerializeObject(donationEmail);
                 CloudQueueMessage message = new CloudQueueMessage(jsonMessage);
                 queue.AddMessage(message, new TimeSpan(7, 0, 0, 0), null, null, null);
             }
