@@ -135,6 +135,19 @@ namespace offset_my_carbon_api.Controllers
             return new JsonResult(weeksDonations);
         }
 
+        [HttpGet("api/monthlydonations/{charity}")]
+        public IActionResult MonthlyDonations(string charity)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var donations = _repository.GetDonationsByCharity(charity);
+            var monthsDonations = donations.Where(d => d.TimeStamp >= DateTime.Now.AddMonths(-1));
+            return new JsonResult(monthsDonations);
+        }
+
         private void AddDonationToEmailQueue(Donation donation)
         {
             var donationEmail = new DonationEmail()
